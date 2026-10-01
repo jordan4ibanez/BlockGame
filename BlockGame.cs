@@ -78,7 +78,7 @@ class Game : IDisposable {
         DoInternals();
         Raylib.BeginDrawing();
         {
-            Raylib.ClearBackground(Color.SkyBlue);
+            Raylib.ClearBackground(Color.Gray);
         }
         Raylib.EndDrawing();
     }
