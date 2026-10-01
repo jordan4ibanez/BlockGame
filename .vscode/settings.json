@@ -4,8 +4,6 @@
         "**/obj": true,
         "**/.gitignore": true,
         "**/.gitattributes": true,
-        ".editorconfig": true,
-        "**/*.csproj": true,
         "LICENSE": true,
     }
 }
