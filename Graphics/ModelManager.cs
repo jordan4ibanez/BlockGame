@@ -278,9 +278,8 @@ static class ModelManager {
         if (animationDatabase.TryGetValue(modelName, out AnimationContainer? thisAnimations) && thisAnimations != null) {
             if (thisAnimations.hasAnimation && thisAnimations.animationData != null) {
                 // Unload individual animation bone tracks without letting Raylib free the managed C# array.
-                for (int i = 0; i < thisAnimations.animationCount; i++) {
-                    Raylib.UnloadModelAnimations(thisAnimations.animationData[i]);
-                }
+                // This function automatically casts the array into a span.
+                Raylib.UnloadModelAnimations(thisAnimations.animationData);
             }
             animationDatabase.Remove(modelName);
         }
