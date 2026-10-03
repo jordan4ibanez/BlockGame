@@ -121,7 +121,7 @@ class Game : IDisposable {
     }
 }
 
-internal static class BlockGame {
+internal static class MainThread {
     [STAThread]
     public static void Main() {
 
