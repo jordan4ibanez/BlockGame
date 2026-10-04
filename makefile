@@ -1,12 +1,12 @@
 default:
-	@dotnet watch
+	@dotnet watch --project source/
 
 oneshot:
-	@dotnet run
+	@dotnet run --project source/
 
 gdb:
-	@dotnet build
-	@gdb -ex r --args dotnet bin/Debug/net10.0/BlockGame.dll
+	@dotnet build source/
+	@gdb -ex r --args dotnet source/bin/Debug/net10.0/BlockGame.dll
 
 clean:
-	@dotnet clean
+	@dotnet clean source/
