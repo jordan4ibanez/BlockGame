@@ -14,7 +14,11 @@ public static class FontManager {
         font = new Font();
         string codePointString = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+={[]}|\\;:'\",<.>©";
         int[] codepoints = [.. codePointString.Select(c => (int)c)];
-        font = Raylib.LoadFontEx("font/roboto_condensed.ttf", 64, codepoints, 0);
+        string fontPath = "font/roboto_condensed.ttf";
+        font = Raylib.LoadFontEx(fontPath, 64, codepoints, 0);
+        if (!Raylib.IsFontValid(font)) {
+            throw new Exception($"Failed to load {fontPath}");
+        }
     }
 
     public static Vector2 GetTextSize(string text) {
