@@ -14,6 +14,9 @@ static class TextureManager {
         string[] folders = ["models", "textures"];
         foreach (string dir in folders) {
             // Console.WriteLine(dir);
+            if (!Directory.Exists(dir)) {
+                throw new Exception($"Directory {dir} does not exist.");
+            }
             foreach (string filePath in Directory.EnumerateFiles(dir, "*.png", SearchOption.AllDirectories)) {
                 LoadTexture(filePath);
             }
