@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using BlockGame.Graphics;
 using BlockGame.Utility;
 using Raylib_cs;
 
@@ -71,20 +72,19 @@ class Game : IDisposable {
         Raylib.SetTargetFPS(0);
 
         // SoundManager.Initialize();
-        // FontManager.Initialize();
-        // TextureManager.Initialize();
-        // ModelManager.Initialize();
-        // ShaderManager.Initialize();
+        FontManager.Initialize();
+        TextureManager.Initialize();
+        ModelManager.Initialize();
+        ShaderManager.Initialize();
 
-        // CameraManager.Initialize();
+        CameraManager.Initialize();
     }
 
     public void Dispose() {
-        // LevelManager.Unload();
-        // ShaderManager.Terminate();
-        // ModelManager.Terminate();
-        // TextureManager.Terminate();
-        // FontManager.Terminate();
+        ShaderManager.Terminate();
+        ModelManager.Terminate();
+        TextureManager.Terminate();
+        FontManager.Terminate();
         // SoundManager.Terminate();
 
         Raylib.CloseAudioDevice();
