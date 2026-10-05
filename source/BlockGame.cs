@@ -116,6 +116,12 @@ class Game : IDisposable {
         Raylib.BeginDrawing();
         {
             Raylib.ClearBackground(Color.Gray);
+
+            Raylib.BeginMode3D(CameraManager.Get());
+
+            Raylib.DrawGrid(100, 1);
+
+            Raylib.EndMode3D();
         }
         Raylib.EndDrawing();
     }
