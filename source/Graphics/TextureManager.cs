@@ -1,89 +1,87 @@
-using Raylib_cs;
-
 namespace BlockGame.Graphics;
 
 static class TextureManager {
 
-    static readonly Dictionary<string, Texture2D> database = [];
+    // static readonly Dictionary<string, Texture2D> database = [];
 
-    public static void Initialize() {
-        // Texture Manager should be the very first thing that loads up when it comes to visual assets.
-        if (Game.IsDebugMode()) {
-            Console.WriteLine("-----");
-        }
-        string[] folders = ["models", "textures"];
-        foreach (string dir in folders) {
-            // Console.WriteLine(dir);
-            if (!Directory.Exists(dir)) {
-                throw new Exception($"Directory {dir} does not exist.");
-            }
-            foreach (string filePath in Directory.EnumerateFiles(dir, "*.png", SearchOption.AllDirectories)) {
-                LoadTexture(filePath);
-            }
-        }
-        if (Game.IsDebugMode()) {
-            Console.WriteLine("-----");
-        }
-    }
+    // public static void Initialize() {
+    //     // Texture Manager should be the very first thing that loads up when it comes to visual assets.
+    //     if (Game.IsDebugMode()) {
+    //         Console.WriteLine("-----");
+    //     }
+    //     string[] folders = ["models", "textures"];
+    //     foreach (string dir in folders) {
+    //         // Console.WriteLine(dir);
+    //         if (!Directory.Exists(dir)) {
+    //             throw new Exception($"Directory {dir} does not exist.");
+    //         }
+    //         foreach (string filePath in Directory.EnumerateFiles(dir, "*.png", SearchOption.AllDirectories)) {
+    //             LoadTexture(filePath);
+    //         }
+    //     }
+    //     if (Game.IsDebugMode()) {
+    //         Console.WriteLine("-----");
+    //     }
+    // }
 
-    public static void LoadTexture(string path) {
+    // public static void LoadTexture(string path) {
 
-        if (!File.Exists(path)) {
-            throw new Exception($"[TextureManager]: {path} is not a file.");
-        }
+    //     if (!File.Exists(path)) {
+    //         throw new Exception($"[TextureManager]: {path} is not a file.");
+    //     }
 
-        if (!path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)) {
-            throw new Exception($"[TextureManager]: {path} is not a png.");
-        }
+    //     if (!path.EndsWith(".png", StringComparison.OrdinalIgnoreCase)) {
+    //         throw new Exception($"[TextureManager]: {path} is not a png.");
+    //     }
 
-        string fileName = Path.GetFileName(path);
+    //     string fileName = Path.GetFileName(path);
 
-        if (fileName.Length == 0) {
-            throw new Exception($"[TextureManager]: {path} returned a blank filename.");
-        }
+    //     if (fileName.Length == 0) {
+    //         throw new Exception($"[TextureManager]: {path} returned a blank filename.");
+    //     }
 
-        if (database.ContainsKey(fileName)) {
-            throw new Exception($"[TextureManager]: Tried to overwrite {path}.");
-        }
+    //     if (database.ContainsKey(fileName)) {
+    //         throw new Exception($"[TextureManager]: Tried to overwrite {path}.");
+    //     }
 
-        Texture2D thisTexture = Raylib.LoadTexture(path);
+    //     Texture2D thisTexture = Raylib.LoadTexture(path);
 
-        if (!Raylib.IsTextureValid(thisTexture)) {
-            throw new Exception($"[TextureManager]: {path} is an invalid texture.");
-        }
+    //     if (!Raylib.IsTextureValid(thisTexture)) {
+    //         throw new Exception($"[TextureManager]: {path} is an invalid texture.");
+    //     }
 
-        database[fileName] = thisTexture;
-        if (Game.IsDebugMode()) {
-            Console.WriteLine($"[TextureManager]: Loaded [{path}] as [{fileName}]");
-        }
-    }
+    //     database[fileName] = thisTexture;
+    //     if (Game.IsDebugMode()) {
+    //         Console.WriteLine($"[TextureManager]: Loaded [{path}] as [{fileName}]");
+    //     }
+    // }
 
-    public static bool HasTexture(string textureName) {
-        return database.ContainsKey(textureName);
-    }
+    // public static bool HasTexture(string textureName) {
+    //     return database.ContainsKey(textureName);
+    // }
 
-    public static Texture2D GetTexture(string textureName) {
-        if (!database.ContainsKey(textureName)) {
-            throw new Exception($"[TextureManager]: Texture {textureName} does not exist.");
-        }
-        return database[textureName];
-    }
+    // public static Texture2D GetTexture(string textureName) {
+    //     if (!database.ContainsKey(textureName)) {
+    //         throw new Exception($"[TextureManager]: Texture {textureName} does not exist.");
+    //     }
+    //     return database[textureName];
+    // }
 
-    public static void DeleteTexture(string textureName) {
-        if (database.TryGetValue(textureName, out Texture2D texture)) {
-            Texture2D thisTexture = database[textureName];
-            Raylib.UnloadTexture(thisTexture);
-            database.Remove(textureName);
-        } else {
-            throw new Exception($"[TextureManager]: Texture {textureName} does not exist. Cannot delete.");
-        }
-    }
+    // public static void DeleteTexture(string textureName) {
+    //     if (database.TryGetValue(textureName, out Texture2D texture)) {
+    //         Texture2D thisTexture = database[textureName];
+    //         Raylib.UnloadTexture(thisTexture);
+    //         database.Remove(textureName);
+    //     } else {
+    //         throw new Exception($"[TextureManager]: Texture {textureName} does not exist. Cannot delete.");
+    //     }
+    // }
 
-    public static void Terminate() {
-        foreach (var (textureName, thisTexture) in database) {
-            Raylib.UnloadTexture(thisTexture);
-        }
-        database.Clear();
-    }
+    // public static void Terminate() {
+    //     foreach (var (textureName, thisTexture) in database) {
+    //         Raylib.UnloadTexture(thisTexture);
+    //     }
+    //     database.Clear();
+    // }
 
 }
