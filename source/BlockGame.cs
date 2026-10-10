@@ -54,7 +54,7 @@ internal static class BlockGame {
             createInfo.PpEnabledExtensionNames = glfwExtensions;
 
             // Debug print out available extensions.
-            DebugPrintExtensions(glfwExtensionCount, glfwExtensions);
+            DebugPrintRequiredExtensions(glfwExtensionCount, glfwExtensions);
             vulkan = Vk.GetApi(createInfo, out instance);
 
             // VK extension support check.
@@ -73,7 +73,7 @@ internal static class BlockGame {
     }
 
 
-    static unsafe void DebugPrintExtensions(uint glfwExtensionCount, byte** glfwExtensions) {
+    static unsafe void DebugPrintRequiredExtensions(uint glfwExtensionCount, byte** glfwExtensions) {
         StringBuilder builder = new();
         builder.Append("Vulkan Required Extensions: [ ");
         for (int i = 0; i < glfwExtensionCount; i++) {
