@@ -4,12 +4,7 @@ using Silk.NET.Vulkan;
 
 namespace BlockGame;
 
-class Game : IDisposable {
-    public Game() { }
-    public void Dispose() { }
-}
-
-internal static class MainThread {
+internal static class BlockGame {
     public static void Main() {
         WindowOptions options = WindowOptions.DefaultVulkan with {
             Size = new Vector2D<int>(800, 600),
