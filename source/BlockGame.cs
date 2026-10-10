@@ -5,23 +5,7 @@ using Raylib_cs;
 
 namespace BlockGame;
 
-public interface IEntity {
-    void OnTick();
-    void OnHit();
-    void OnHPChange();
-}
 
-class Frog : IEntity {
-    public void OnTick() {
-        Console.WriteLine("If the women don't find you handsome, they should at least find you handy");
-    }
-    public void OnHit() {
-        Console.WriteLine("hit");
-    }
-    public void OnHPChange() {
-        Console.WriteLine("HP am have done darn diggity dang changed");
-    }
-}
 
 static class Testing {
 
