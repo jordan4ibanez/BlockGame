@@ -171,7 +171,7 @@ internal static class BlockGame {
             requiredExtensions.Add(ExtDebugUtils.ExtensionName);
         }
 
-        Console.WriteLine($"Required extensions: [ {string.Join(", ", requiredExtensions)} ]");
+        Console.WriteLine($"Vulkan required extensions: [ {string.Join(", ", requiredExtensions)} ]");
 
         return [.. requiredExtensions];
     }
