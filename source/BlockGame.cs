@@ -12,21 +12,18 @@ internal static class BlockGame {
     private const string WINDOW_NAME = "BlockGame";
     private static IWindow? window;
 
+    // This is the GLFW library.
+    readonly private static Glfw glfw = Glfw.GetApi();
+
+    // This is the instance of Vulkan.
+    private static Instance vulkanInstance;
+
+    // This is the Vulkan library DLL. (function pointers)
+    private static Vk? vulkan;
+
     public static unsafe void Main() {
 
-        WindowOptions options = WindowOptions.DefaultVulkan with {
-            Size = new Vector2D<int>(800, 600),
-            Title = WINDOW_NAME
-        };
-
-        window = Window.Create(options);
-
-        Glfw glfw = Glfw.GetApi();
-
-        Instance instance;
-
-        // This is the Vulkan library DLL. (function pointers)
-        Vk vulkan;
+        InitWindow();
 
         fixed (char* engineName = "No Engine")
         fixed (char* appName = WINDOW_NAME) {
@@ -55,23 +52,44 @@ internal static class BlockGame {
 
             // Debug print out available extensions.
             DebugPrintRequiredExtensions(glfwExtensionCount, glfwExtensions);
-            vulkan = Vk.GetApi(createInfo, out instance);
+            vulkan = Vk.GetApi(createInfo, out vulkanInstance);
 
             // VK extension support check.
             DebugPrintExtensionSupport(vulkan);
         }
 
-        vulkan.DestroyInstance(instance, null);
 
-        glfw.Terminate();
+
+        CleanUp();
     }
 
     static unsafe void InitWindow() {
-        
+        WindowOptions options = WindowOptions.DefaultVulkan with {
+            Size = new Vector2D<int>(800, 600),
+            Title = WINDOW_NAME
+        };
+        window = Window.Create(options);
     }
 
     static unsafe void InitVulkan() {
-        
+
+    }
+
+    static unsafe void CleanUp() {
+
+        if (vulkan == null) {
+            throw new Exception("Vulkan DLL became null somehow");
+        }
+
+
+        if (window == null) {
+            throw new Exception("Window became null somehow");
+        }
+
+        vulkan.DestroyInstance(vulkanInstance, null);
+        window.Dispose();
+        glfw.Terminate();
+
     }
 
     static unsafe void DebugPrintExtensionSupport(Vk vulkan) {
