@@ -103,7 +103,7 @@ internal static class BlockGame {
             createInfo.SType = StructureType.InstanceCreateInfo;
             createInfo.PApplicationInfo = &appInfo;
 
-            List<byte[]> layerBytes = requiredValidationLayers.Select(s => Encoding.UTF8.GetBytes(s)).ToList();
+            List<byte[]> layerBytes = [.. requiredValidationLayers.Select(Encoding.UTF8.GetBytes)];
             GCHandle[] handles = new GCHandle[layerBytes.Count];
             byte** layerPointers = null;
 
