@@ -21,6 +21,8 @@ internal static class BlockGame {
     // This is the Vulkan library DLL. (function pointers)
     private static Vk? vulkan;
 
+    readonly static string[] requiredValidationLayers = ["VK_LAYER_KHRONOS_validation"];
+
     public static unsafe void Main() {
 
         InitWindow();
@@ -109,6 +111,36 @@ internal static class BlockGame {
             // VK extension support check.
             DebugPrintExtensionSupport(vulkan);
         }
+
+        CheckValidationLayerSupport();
+    }
+
+    static unsafe bool CheckValidationLayerSupport() {
+
+
+        uint layerCount = 0;
+        vulkan.EnumerateInstanceLayerProperties(ref layerCount, null);
+
+        LayerProperties[] availableLayers = new LayerProperties[layerCount];
+
+        vulkan.EnumerateInstanceLayerProperties(ref layerCount, ref availableLayers[0]);
+
+        List<string> foundValidationLayers = [];
+        foreach (var layer in availableLayers) {
+            string? foundLayerName = Marshal.PtrToStringUTF8((nint)layer.LayerName);
+            if (foundLayerName != null) {
+                foundValidationLayers.Add(foundLayerName);
+            }
+        }
+        foreach (var requiredLayer in requiredValidationLayers) {
+            Console.Write($"Looking for validation layer {requiredLayer}...");
+            if (!foundValidationLayers.Contains(requiredLayer)) {
+                Console.WriteLine($"MISSING validation layer: {requiredLayer}");
+                return false;
+            }
+            Console.WriteLine("Found!");
+        }
+        return true;
     }
 
     static unsafe void CleanUp() {
