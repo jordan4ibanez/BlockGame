@@ -62,6 +62,8 @@ internal static class BlockGame {
         }
 
         vulkan.DestroyInstance(instance, null);
+
+        glfw.Terminate();
     }
 
     static unsafe void DebugPrintExtensionSupport(Vk vulkan) {
