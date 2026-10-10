@@ -154,9 +154,10 @@ internal static class BlockGame {
                 throw new Exception("Missing validation layer!");
             }
         }
+    }
 
-
-
+    static unsafe void GetRequiredExtensions() {
+                
     }
 
     static unsafe bool CheckValidationLayerSupport() {
