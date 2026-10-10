@@ -24,8 +24,14 @@ internal static class BlockGame {
     public static unsafe void Main() {
 
         InitWindow();
-        InitVulkan();
-        Mainloop();
+
+        if (window == null) {
+            throw new Exception("Window became null");
+        }
+
+        window.Run();
+
+
         CleanUp();
     }
 
@@ -36,34 +42,32 @@ internal static class BlockGame {
         };
         window = Window.Create(options);
 
-        // window.Load += Load;
-        // window.Update += Update;
-        // window.Render += Render;
-
-
-        window.Run();
-
+        window.Load += Load;
+        window.Update += Update;
+        window.Render += Render;
     }
 
-    // static void Load() { }
-    // static void Update(double delta) { }
-    // static void Render(double delta) { }
-
-
-
-    static unsafe void Mainloop() {
-        if (window == null) {
-            throw new Exception("Window became null");
-        }
-
-        if (window.Handle == 0) {
-            throw new Exception("Window handle pointer is null");
-        }
-
-        while (!glfw.WindowShouldClose((WindowHandle*)window.Handle)) {
-            glfw.PollEvents();
-        }
+    static void Load() {
+        InitVulkan();
     }
+    static void Update(double delta) { }
+    static void Render(double delta) { }
+
+
+
+    // static unsafe void Mainloop() {
+    //     if (window == null) {
+    //         throw new Exception("Window became null");
+    //     }
+
+    //     if (window.Handle == 0) {
+    //         throw new Exception("Window handle pointer is null");
+    //     }
+
+    //     while (!glfw.WindowShouldClose((WindowHandle*)window.Handle)) {
+    //         glfw.PollEvents();
+    //     }
+    // }
 
     static unsafe void InitVulkan() {
         CreateInstance();
