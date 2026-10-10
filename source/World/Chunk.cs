@@ -1,6 +1,6 @@
 namespace BlockGame.World;
 
-public class Chunk {
+public sealed class Chunk {
     
 
     private readonly ChunkData data = new();
