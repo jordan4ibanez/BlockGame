@@ -156,8 +156,25 @@ internal static class BlockGame {
         }
     }
 
-    static unsafe void GetRequiredExtensions() {
-                
+    static unsafe string[] GetRequiredExtensions() {
+        uint glfwExtensionCount = 0;
+        char** glfwExtensions = (char**)glfw.GetRequiredInstanceExtensions(out glfwExtensionCount);
+
+        List<string> requiredExtensions = [];
+        for (int i = 0; i < glfwExtensionCount; i++) {
+            string? requiredExtensionString = Marshal.PtrToStringUTF8((nint)glfwExtensions[i]);
+            if (requiredExtensionString != null) {
+                requiredExtensions.Add(requiredExtensionString);
+            }
+        }
+
+        if (ENABLE_VALIDATION_LAYERS) {
+            requiredExtensions.Add(ExtDebugUtils.ExtensionName);
+        }
+
+        Console.WriteLine($"Required extensions: [ {string.Join(", ", requiredExtensions)} ]");
+
+        return [.. requiredExtensions];
     }
 
     static unsafe bool CheckValidationLayerSupport() {
