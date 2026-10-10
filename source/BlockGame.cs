@@ -132,16 +132,18 @@ internal static class BlockGame {
             GCHandle[] requiredExtensionNamesHandles = new GCHandle[requiredExtensionNamesBytes.Count];
             byte** requiredExtensionNamePointers = null;
 
-            //! Manual memory management. (Malloc) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
-            requiredExtensionNamePointers = (byte**)NativeMemory.Alloc((nuint)requiredExtensionNamesBytes.Count, (nuint)sizeof(byte*));
-            for (int i = 0; i < requiredExtensionNamesBytes.Count; i++) {
-                requiredExtensionNamesHandles[i] = GCHandle.Alloc(requiredExtensionNamesBytes[i], GCHandleType.Pinned);
-                requiredExtensionNamePointers[i] = (byte*)requiredExtensionNamesHandles[i].AddrOfPinnedObject();
-            }
-            //! End manual memory management. (Malloc) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
+            {
+                //! Manual memory management. (Malloc) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
+                requiredExtensionNamePointers = (byte**)NativeMemory.Alloc((nuint)requiredExtensionNamesBytes.Count, (nuint)sizeof(byte*));
+                for (int i = 0; i < requiredExtensionNamesBytes.Count; i++) {
+                    requiredExtensionNamesHandles[i] = GCHandle.Alloc(requiredExtensionNamesBytes[i], GCHandleType.Pinned);
+                    requiredExtensionNamePointers[i] = (byte*)requiredExtensionNamesHandles[i].AddrOfPinnedObject();
+                }
+                //! End manual memory management. (Malloc) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
 
-            createInfo.EnabledExtensionCount = (uint)requiredExtensionNames.Length;
-            createInfo.PpEnabledExtensionNames = requiredExtensionNamePointers;
+                createInfo.EnabledExtensionCount = (uint)requiredExtensionNames.Length;
+                createInfo.PpEnabledExtensionNames = requiredExtensionNamePointers;
+            }
 
             vulkan = Vk.GetApi(createInfo, out vulkanInstance);
 
