@@ -25,6 +25,9 @@ internal static class BlockGame {
 
         Instance instance;
 
+        // This is the Vulkan library DLL. (function pointers)
+        Vk vulkan;
+
         fixed (char* engineName = "No Engine")
         fixed (char* appName = WINDOW_NAME) {
             // VK setup.
@@ -36,11 +39,12 @@ internal static class BlockGame {
             appInfo.EngineVersion = Vk.MakeVersion(1, 0, 0);
             appInfo.ApiVersion = Vk.Version10;
 
-            //  VK init.
+            // VK init.
             InstanceCreateInfo createInfo = new();
             createInfo.SType = StructureType.InstanceCreateInfo;
             createInfo.PApplicationInfo = &appInfo;
 
+            // VK required extensions.
             uint glfwExtensionCount = 0;
             byte** glfwExtensions;
 
@@ -51,9 +55,20 @@ internal static class BlockGame {
 
             // Debug print out available extensions.
             DebugPrintExtensions(glfwExtensionCount, glfwExtensions);
+            vulkan = Vk.GetApi(createInfo, out instance);
+
+            // VK extension support check.
+
+            uint extensionCount = 0;
+
+            vulkan.EnumerateInstanceExtensionProperties((byte*)null, ref extensionCount, null);
 
 
-            Vk.GetApi(createInfo, out instance);
+
+
+
+
+
         }
     }
 
