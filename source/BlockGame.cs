@@ -135,7 +135,7 @@ internal static class BlockGame {
         foreach (var requiredLayer in requiredValidationLayers) {
             Console.Write($"Looking for validation layer {requiredLayer}...");
             if (!foundValidationLayers.Contains(requiredLayer)) {
-                Console.WriteLine($"MISSING validation layer: {requiredLayer}");
+                Console.WriteLine($"MISSING!");
                 return false;
             }
             Console.WriteLine("Found!");
