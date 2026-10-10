@@ -1,5 +1,6 @@
-﻿using BlockGame.Graphics;
-using BlockGame.Utility;
+﻿using Silk.NET.Maths;
+using Silk.NET.Windowing;
+using Silk.NET.Vulkan;
 
 namespace BlockGame;
 
@@ -11,8 +12,10 @@ class Game : IDisposable {
 internal static class MainThread {
     [STAThread]
     public static void Main() {
-
-
+        WindowOptions options = WindowOptions.DefaultVulkan with {
+            Size = new Vector2D<int>(800, 600),
+            Title = "test"
+        };
 
     }
 }
