@@ -59,14 +59,6 @@ internal static class BlockGame {
 
             // VK extension support check.
 
-            uint extensionCount = 0;
-
-            vulkan.EnumerateInstanceExtensionProperties((byte*)null, ref extensionCount, null);
-
-
-
-
-
 
 
         }
