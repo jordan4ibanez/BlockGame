@@ -10,7 +10,6 @@ class Game : IDisposable {
 }
 
 internal static class MainThread {
-    [STAThread]
     public static void Main() {
         WindowOptions options = WindowOptions.DefaultVulkan with {
             Size = new Vector2D<int>(800, 600),
