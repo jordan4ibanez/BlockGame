@@ -80,11 +80,11 @@ internal static class BlockGame {
 
     static unsafe void InitVulkan() {
         CreateInstance();
+        SetupDebugMessenger();
     }
 
+
     static unsafe void CreateInstance() {
-
-
 
         fixed (char* engineName = "No Engine")
         fixed (char* appName = WINDOW_NAME) {
@@ -171,6 +171,35 @@ internal static class BlockGame {
                 throw new Exception("Missing validation layer!");
             }
         }
+    }
+
+    static unsafe void SetupDebugMessenger() {
+        if (!ENABLE_VALIDATION_LAYERS) {
+            return;
+        }
+
+        DebugUtilsMessengerCreateInfoEXT createInfo = new();
+        createInfo.SType = StructureType.DebugUtilsMessengerCreateInfoExt;
+        createInfo.MessageSeverity = DebugUtilsMessageSeverityFlagsEXT.VerboseBitExt | DebugUtilsMessageSeverityFlagsEXT.WarningBitExt | DebugUtilsMessageSeverityFlagsEXT.ErrorBitExt;
+        createInfo.MessageType = DebugUtilsMessageTypeFlagsEXT.GeneralBitExt | DebugUtilsMessageTypeFlagsEXT.ValidationBitExt | DebugUtilsMessageTypeFlagsEXT.PerformanceBitExt;
+        createInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(DebugCallback);
+        createInfo.PUserData = null; // Optional
+
+        Console.WriteLine("Enabled vulkan debug messenger.");
+    }
+
+    static unsafe uint DebugCallback(DebugUtilsMessageSeverityFlagsEXT messageSeverity,
+        DebugUtilsMessageTypeFlagsEXT messageType,
+        DebugUtilsMessengerCallbackDataEXT* pCallbackData,
+        void* pUserData) {
+
+        if (pCallbackData == null) {
+            throw new Exception("null data");
+        }
+
+        Console.WriteLine(Marshal.PtrToStringUTF8((nint)pCallbackData->PMessage));
+
+        return Vk.False;
     }
 
     static unsafe string[] GetRequiredExtensions() {
