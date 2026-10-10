@@ -126,17 +126,33 @@ internal static class BlockGame {
             }
 
             // VK required extensions.
-            uint glfwExtensionCount = 0;
-            byte** glfwExtensions;
+            string[] requiredExtensionNames = GetRequiredExtensions();
 
-            glfwExtensions = glfw.GetRequiredInstanceExtensions(out glfwExtensionCount);
+            List<byte[]> requiredExtensionNamesBytes = [.. requiredExtensionNames.Select(Encoding.UTF8.GetBytes)];
+            GCHandle[] requiredExtensionNamesHandles = new GCHandle[requiredExtensionNamesBytes.Count];
+            byte** requiredExtensionNamePointers = null;
 
-            createInfo.EnabledExtensionCount = glfwExtensionCount;
-            createInfo.PpEnabledExtensionNames = glfwExtensions;
+            //! Manual memory management. (Malloc) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
+            requiredExtensionNamePointers = (byte**)NativeMemory.Alloc((nuint)requiredExtensionNamesBytes.Count, (nuint)sizeof(byte*));
+            for (int i = 0; i < requiredExtensionNamesBytes.Count; i++) {
+                requiredExtensionNamesHandles[i] = GCHandle.Alloc(requiredExtensionNamesBytes[i], GCHandleType.Pinned);
+                requiredExtensionNamePointers[i] = (byte*)requiredExtensionNamesHandles[i].AddrOfPinnedObject();
+            }
+            //! End manual memory management. (Malloc) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
 
-            // Debug print out available extensions.
-            DebugPrintRequiredExtensions(glfwExtensionCount, glfwExtensions);
+            createInfo.EnabledExtensionCount = (uint)requiredExtensionNames.Length;
+            createInfo.PpEnabledExtensionNames = requiredExtensionNamePointers;
+
             vulkan = Vk.GetApi(createInfo, out vulkanInstance);
+
+
+
+            //! Manual memory management. (Free) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
+            for (int i = 0; i < requiredExtensionNamesHandles.Length; i++) {
+                if (requiredExtensionNamesHandles[i].IsAllocated) requiredExtensionNamesHandles[i].Free();
+            }
+            if (requiredExtensionNamePointers != null) NativeMemory.Free(requiredExtensionNamePointers);
+            //! End manual memory management. (Free) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
 
             //! Manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
             for (int i = 0; i < validationLayerNameHandles.Length; i++) {
