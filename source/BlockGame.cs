@@ -48,24 +48,30 @@ internal static class BlockGame {
             createInfo.PpEnabledExtensionNames = glfwExtensions;
 
             // Debug print out available extensions.
-            StringBuilder builder = new();
-            builder.Append("Vulkan Extensions: [ ");
-            for (int i = 0; i < glfwExtensionCount; i++) {
-                byte* currentExtension = glfwExtensions[i];
-                int length = 0;
-                for (int l = 0; l < 255; l++) {
-                    if (currentExtension[l] == 0) {
-                        length = l;
-                        break;
-                    }
-                }
-                builder.Append(Marshal.PtrToStringUTF8((nint)currentExtension));
-                if (i < glfwExtensionCount - 1) {
-                    builder.Append(", ");
+            DebugPrintExtensions(glfwExtensionCount, glfwExtensions);
+
+        }
+    }
+
+
+    static unsafe void DebugPrintExtensions(uint glfwExtensionCount, byte** glfwExtensions) {
+        StringBuilder builder = new();
+        builder.Append("Vulkan Extensions: [ ");
+        for (int i = 0; i < glfwExtensionCount; i++) {
+            byte* currentExtension = glfwExtensions[i];
+            int length = 0;
+            for (int l = 0; l < 255; l++) {
+                if (currentExtension[l] == 0) {
+                    length = l;
+                    break;
                 }
             }
-            builder.Append(" ]");
-            Console.WriteLine(builder.ToString());
+            builder.Append(Marshal.PtrToStringUTF8((nint)currentExtension));
+            if (i < glfwExtensionCount - 1) {
+                builder.Append(", ");
+            }
         }
+        builder.Append(" ]");
+        Console.WriteLine(builder.ToString());
     }
 }
