@@ -120,7 +120,7 @@ internal static class BlockGame {
                 }
                 //! End manual memory management. (Malloc) [handles, layerPointers]
 
-                createInfo.PpEnabledLayerNames = layerPointers;
+                createInfo.PpEnabledLayerNames = validationLayerNamePointers;
             } else {
                 createInfo.EnabledLayerCount = 0;
             }
