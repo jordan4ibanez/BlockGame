@@ -59,9 +59,9 @@ internal static class BlockGame {
 
             // VK extension support check.
             DebugPrintExtensionSupport(vulkan);
-
-
         }
+
+        vulkan.DestroyInstance(instance, null);
     }
 
     static unsafe void DebugPrintExtensionSupport(Vk vulkan) {
