@@ -35,7 +35,21 @@ internal static class BlockGame {
             Title = WINDOW_NAME
         };
         window = Window.Create(options);
+
+        // window.Load += Load;
+        // window.Update += Update;
+        // window.Render += Render;
+
+
+        window.Run();
+
     }
+
+    // static void Load() { }
+    // static void Update(double delta) { }
+    // static void Render(double delta) { }
+
+
 
     static unsafe void Mainloop() {
         if (window == null) {
