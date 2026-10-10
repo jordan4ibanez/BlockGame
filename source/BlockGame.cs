@@ -66,6 +66,14 @@ internal static class BlockGame {
         glfw.Terminate();
     }
 
+    static unsafe void InitWindow() {
+        
+    }
+
+    static unsafe void InitVulkan() {
+        
+    }
+
     static unsafe void DebugPrintExtensionSupport(Vk vulkan) {
         StringBuilder builder = new();
         builder.Append("Vulkan Supported Extensions: [ ");
