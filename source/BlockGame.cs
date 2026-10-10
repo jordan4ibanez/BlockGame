@@ -24,6 +24,24 @@ internal static class BlockGame {
     public static unsafe void Main() {
 
         InitWindow();
+        InitVulkan();
+        // Mainloop;
+        CleanUp();
+    }
+
+    static unsafe void InitWindow() {
+        WindowOptions options = WindowOptions.DefaultVulkan with {
+            Size = new Vector2D<int>(800, 600),
+            Title = WINDOW_NAME
+        };
+        window = Window.Create(options);
+    }
+
+    static unsafe void InitVulkan() {
+        CreateInstance();
+    }
+
+    static unsafe void CreateInstance() {
 
         fixed (char* engineName = "No Engine")
         fixed (char* appName = WINDOW_NAME) {
@@ -57,22 +75,6 @@ internal static class BlockGame {
             // VK extension support check.
             DebugPrintExtensionSupport(vulkan);
         }
-
-
-
-        CleanUp();
-    }
-
-    static unsafe void InitWindow() {
-        WindowOptions options = WindowOptions.DefaultVulkan with {
-            Size = new Vector2D<int>(800, 600),
-            Title = WINDOW_NAME
-        };
-        window = Window.Create(options);
-    }
-
-    static unsafe void InitVulkan() {
-
     }
 
     static unsafe void CleanUp() {
