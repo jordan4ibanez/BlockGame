@@ -50,7 +50,9 @@ internal static class BlockGame {
     static void Load() {
         InitVulkan();
     }
-    static void Update(double delta) { }
+    static void Update(double delta) {
+        window.Close();
+    }
     static void Render(double delta) { }
 
 
