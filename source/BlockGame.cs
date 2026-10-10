@@ -58,10 +58,30 @@ internal static class BlockGame {
             vulkan = Vk.GetApi(createInfo, out instance);
 
             // VK extension support check.
-
+            DebugPrintExtensionSupport(vulkan);
 
 
         }
+    }
+
+    static unsafe void DebugPrintExtensionSupport(Vk vulkan) {
+        StringBuilder builder = new();
+        builder.Append("Vulkan Supported Extensions: [ ");
+        uint extensionCount = 0;
+        vulkan.EnumerateInstanceExtensionProperties((byte*)null, ref extensionCount, null);
+        ExtensionProperties[] extensions = new ExtensionProperties[extensionCount];
+        vulkan.EnumerateInstanceExtensionProperties((byte*)null, &extensionCount, ref extensions[0]);
+
+        for (int i = 0; i < extensionCount; i++) {
+            fixed (byte* extensionName = extensions[i].ExtensionName) {
+                builder.Append(Marshal.PtrToStringUTF8((nint)extensionName));
+                if (i < extensionCount - 1) {
+                    builder.Append(", ");
+                }
+            }
+        }
+        builder.Append(" ]");
+        Console.WriteLine(builder.ToString());
     }
 
 
