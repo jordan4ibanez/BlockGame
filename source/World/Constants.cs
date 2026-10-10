@@ -1,0 +1,2 @@
+namespace BlockGame.World;
+
