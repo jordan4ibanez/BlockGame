@@ -21,6 +21,7 @@ internal static class BlockGame {
     // This is the Vulkan library DLL. (function pointers)
     private static Vk? vulkan;
 
+    readonly static bool ENABLE_VALIDATION_LAYERS = true;
     readonly static string[] requiredValidationLayers = ["VK_LAYER_KHRONOS_validation"];
 
     public static unsafe void Main() {
@@ -79,9 +80,12 @@ internal static class BlockGame {
 
     static unsafe void CreateInstance() {
 
+
+
         fixed (char* engineName = "No Engine")
         fixed (char* appName = WINDOW_NAME) {
-            // VK setup.
+
+            //~ VK app info.
             ApplicationInfo appInfo = new();
             appInfo.SType = StructureType.ApplicationInfo;
             appInfo.PApplicationName = (byte*)appName;
@@ -90,10 +94,34 @@ internal static class BlockGame {
             appInfo.EngineVersion = Vk.MakeVersion(1, 0, 0);
             appInfo.ApiVersion = Vk.Version10;
 
-            // VK init.
+            //~ VK create info.
             InstanceCreateInfo createInfo = new();
             createInfo.SType = StructureType.InstanceCreateInfo;
             createInfo.PApplicationInfo = &appInfo;
+
+            List<byte[]> layerBytes = requiredValidationLayers.Select(s => Encoding.UTF8.GetBytes(s)).ToList();
+            GCHandle[] handles = new GCHandle[layerBytes.Count];
+            byte** layerPointers = null;
+
+
+
+            if (ENABLE_VALIDATION_LAYERS) {
+                Console.WriteLine("Enabling validation layers.");
+
+                createInfo.EnabledLayerCount = (uint)requiredValidationLayers.Length;
+
+                //! Manual memory management. (Malloc) [handles, layerPointers]
+                layerPointers = (byte**)NativeMemory.Alloc((nuint)layerBytes.Count, (nuint)sizeof(byte*));
+                for (int i = 0; i < layerBytes.Count; i++) {
+                    handles[i] = GCHandle.Alloc(layerBytes[i], GCHandleType.Pinned);
+                    layerPointers[i] = (byte*)handles[i].AddrOfPinnedObject();
+                }
+                //! End manual memory management. (Malloc) [handles, layerPointers]
+
+                createInfo.PpEnabledLayerNames = layerPointers;
+            } else {
+                createInfo.EnabledLayerCount = 0;
+            }
 
             // VK required extensions.
             uint glfwExtensionCount = 0;
@@ -108,15 +136,27 @@ internal static class BlockGame {
             DebugPrintRequiredExtensions(glfwExtensionCount, glfwExtensions);
             vulkan = Vk.GetApi(createInfo, out vulkanInstance);
 
+            //! Manual memory management. (Free) [handles, layerPointers]
+            for (int i = 0; i < handles.Length; i++) {
+                if (handles[i].IsAllocated) handles[i].Free();
+            }
+            if (layerPointers != null) NativeMemory.Free(layerPointers);
+            //! End manual memory management. (Free) [handles, layerPointers]
+
             // VK extension support check.
             DebugPrintExtensionSupport(vulkan);
+
+            // VK validation layer support check.
+            if (ENABLE_VALIDATION_LAYERS && !CheckValidationLayerSupport()) {
+                throw new Exception("Missing validation layer!");
+            }
         }
 
-        CheckValidationLayerSupport();
+
+
     }
 
     static unsafe bool CheckValidationLayerSupport() {
-
 
         uint layerCount = 0;
         vulkan.EnumerateInstanceLayerProperties(ref layerCount, null);
