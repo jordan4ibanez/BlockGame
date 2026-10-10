@@ -244,17 +244,18 @@ internal static class BlockGame {
     }
 
 
-    static unsafe void DebugPrintRequiredExtensions(uint glfwExtensionCount, byte** glfwExtensions) {
-        StringBuilder builder = new();
-        builder.Append("Vulkan Required Extensions: [ ");
-        for (int i = 0; i < glfwExtensionCount; i++) {
-            byte* currentExtension = glfwExtensions[i];
-            builder.Append(Marshal.PtrToStringUTF8((nint)currentExtension));
-            if (i < glfwExtensionCount - 1) {
-                builder.Append(", ");
-            }
-        }
-        builder.Append(" ]");
-        Console.WriteLine(builder.ToString());
-    }
+    //! Code left here as a refresher.
+    // static unsafe void DebugPrintRequiredExtensions(uint glfwExtensionCount, byte** extensions) {
+    //     StringBuilder builder = new();
+    //     builder.Append("Vulkan Required Extensions: [ ");
+    //     for (int i = 0; i < glfwExtensionCount; i++) {
+    //         byte* currentExtension = extensions[i];
+    //         builder.Append(Marshal.PtrToStringUTF8((nint)currentExtension));
+    //         if (i < glfwExtensionCount - 1) {
+    //             builder.Append(", ");
+    //         }
+    //     }
+    //     builder.Append(" ]");
+    //     Console.WriteLine(builder.ToString());
+    // }
 }
