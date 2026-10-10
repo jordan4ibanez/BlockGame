@@ -1,9 +1,16 @@
 namespace BlockGame.World;
 
 public class Chunk {
-    readonly public static int WIDTH = 16;
-    readonly public static int HEIGHT = 128;
+    public const int WIDTH = 16;
+    public const int HEIGHT = 128;
 
-    
+    private readonly ChunkData data = new();
+
+    public Chunk() {
+
+    }
+
+
+
 
 }
