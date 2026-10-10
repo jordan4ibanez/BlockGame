@@ -3,13 +3,13 @@ using System.Runtime.CompilerServices;
 namespace BlockGame.World;
 
 readonly public struct ChunkData {
-    readonly private int[] data = new int[Chunk.WIDTH * Chunk.HEIGHT * Chunk.WIDTH];
+    readonly private int[] data = new int[Constants.WIDTH * Constants.HEIGHT * Constants.WIDTH];
 
     public ChunkData() { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private int GetIndex(int x, int y, int z) {
-        return x + (z * Chunk.WIDTH) + (y * Chunk.WIDTH * Chunk.WIDTH);
+        return x + (z * Constants.WIDTH) + (y * Constants.WIDTH * Constants.WIDTH);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
