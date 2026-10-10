@@ -112,13 +112,13 @@ internal static class BlockGame {
 
                 createInfo.EnabledLayerCount = (uint)requiredValidationLayers.Length;
 
-                //! Manual memory management. (Malloc) [handles, layerPointers]
+                //! Manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
                 validationLayerNamePointers = (byte**)NativeMemory.Alloc((nuint)validationLayerNameBytes.Count, (nuint)sizeof(byte*));
                 for (int i = 0; i < validationLayerNameBytes.Count; i++) {
                     validationLayerNameHandles[i] = GCHandle.Alloc(validationLayerNameBytes[i], GCHandleType.Pinned);
                     validationLayerNamePointers[i] = (byte*)validationLayerNameHandles[i].AddrOfPinnedObject();
                 }
-                //! End manual memory management. (Malloc) [handles, layerPointers]
+                //! End manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
 
                 createInfo.PpEnabledLayerNames = validationLayerNamePointers;
             } else {
@@ -138,12 +138,12 @@ internal static class BlockGame {
             DebugPrintRequiredExtensions(glfwExtensionCount, glfwExtensions);
             vulkan = Vk.GetApi(createInfo, out vulkanInstance);
 
-            //! Manual memory management. (Free) [handles, layerPointers]
+            //! Manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
             for (int i = 0; i < validationLayerNameHandles.Length; i++) {
                 if (validationLayerNameHandles[i].IsAllocated) validationLayerNameHandles[i].Free();
             }
             if (validationLayerNamePointers != null) NativeMemory.Free(validationLayerNamePointers);
-            //! End manual memory management. (Free) [handles, layerPointers]
+            //! End manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
 
             // VK extension support check.
             DebugPrintExtensionSupport(vulkan);
