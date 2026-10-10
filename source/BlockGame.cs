@@ -54,6 +54,9 @@ internal static class BlockGame {
         InitVulkan();
     }
     static void Update(double delta) {
+        if (window == null) {
+            throw new Exception("Window went missing");
+        }
         window.Close();
     }
     static void Render(double delta) { }
@@ -157,6 +160,9 @@ internal static class BlockGame {
     }
 
     static unsafe bool CheckValidationLayerSupport() {
+        if (vulkan == null) {
+            throw new Exception("Vulkan exploded");
+        }
 
         uint layerCount = 0;
         vulkan.EnumerateInstanceLayerProperties(ref layerCount, null);
