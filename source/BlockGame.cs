@@ -103,11 +103,9 @@ internal static class BlockGame {
             createInfo.SType = StructureType.InstanceCreateInfo;
             createInfo.PApplicationInfo = &appInfo;
 
-            List<byte[]> layerBytes = [.. requiredValidationLayers.Select(Encoding.UTF8.GetBytes)];
-            GCHandle[] handles = new GCHandle[layerBytes.Count];
-            byte** layerPointers = null;
-
-
+            List<byte[]> validationLayerNameBytes = [.. requiredValidationLayers.Select(Encoding.UTF8.GetBytes)];
+            GCHandle[] validationLayerNameHandles = new GCHandle[validationLayerNameBytes.Count];
+            byte** validationLayerNamePointers = null;
 
             if (ENABLE_VALIDATION_LAYERS) {
                 Console.WriteLine("Enabling validation layers.");
@@ -115,10 +113,10 @@ internal static class BlockGame {
                 createInfo.EnabledLayerCount = (uint)requiredValidationLayers.Length;
 
                 //! Manual memory management. (Malloc) [handles, layerPointers]
-                layerPointers = (byte**)NativeMemory.Alloc((nuint)layerBytes.Count, (nuint)sizeof(byte*));
-                for (int i = 0; i < layerBytes.Count; i++) {
-                    handles[i] = GCHandle.Alloc(layerBytes[i], GCHandleType.Pinned);
-                    layerPointers[i] = (byte*)handles[i].AddrOfPinnedObject();
+                validationLayerNamePointers = (byte**)NativeMemory.Alloc((nuint)validationLayerNameBytes.Count, (nuint)sizeof(byte*));
+                for (int i = 0; i < validationLayerNameBytes.Count; i++) {
+                    validationLayerNameHandles[i] = GCHandle.Alloc(validationLayerNameBytes[i], GCHandleType.Pinned);
+                    validationLayerNamePointers[i] = (byte*)validationLayerNameHandles[i].AddrOfPinnedObject();
                 }
                 //! End manual memory management. (Malloc) [handles, layerPointers]
 
@@ -141,10 +139,10 @@ internal static class BlockGame {
             vulkan = Vk.GetApi(createInfo, out vulkanInstance);
 
             //! Manual memory management. (Free) [handles, layerPointers]
-            for (int i = 0; i < handles.Length; i++) {
-                if (handles[i].IsAllocated) handles[i].Free();
+            for (int i = 0; i < validationLayerNameHandles.Length; i++) {
+                if (validationLayerNameHandles[i].IsAllocated) validationLayerNameHandles[i].Free();
             }
-            if (layerPointers != null) NativeMemory.Free(layerPointers);
+            if (validationLayerNamePointers != null) NativeMemory.Free(validationLayerNamePointers);
             //! End manual memory management. (Free) [handles, layerPointers]
 
             // VK extension support check.
