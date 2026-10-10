@@ -20,19 +20,18 @@ class Game : IDisposable {
     void Setup() {
 
         // SoundManager.Initialize();
-        FontManager.Initialize();
-        TextureManager.Initialize();
-        ModelManager.Initialize();
-        ShaderManager.Initialize();
-
-        CameraManager.Initialize();
+        // FontManager.Initialize();
+        // TextureManager.Initialize();
+        // ModelManager.Initialize();
+        // ShaderManager.Initialize();
+        // CameraManager.Initialize();
     }
 
     public void Dispose() {
-        ShaderManager.Terminate();
-        ModelManager.Terminate();
-        TextureManager.Terminate();
-        FontManager.Terminate();
+        // ShaderManager.Terminate();
+        // ModelManager.Terminate();
+        // TextureManager.Terminate();
+        // FontManager.Terminate();
         // SoundManager.Terminate();
     }
 
