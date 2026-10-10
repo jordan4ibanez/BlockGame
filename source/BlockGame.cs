@@ -23,6 +23,8 @@ internal static class BlockGame {
 
         Glfw glfw = Glfw.GetApi();
 
+        Instance instance;
+
         fixed (char* engineName = "No Engine")
         fixed (char* appName = WINDOW_NAME) {
             // VK setup.
@@ -50,13 +52,15 @@ internal static class BlockGame {
             // Debug print out available extensions.
             DebugPrintExtensions(glfwExtensionCount, glfwExtensions);
 
+
+            Vk.GetApi(createInfo, out instance);
         }
     }
 
 
     static unsafe void DebugPrintExtensions(uint glfwExtensionCount, byte** glfwExtensions) {
         StringBuilder builder = new();
-        builder.Append("Vulkan Extensions: [ ");
+        builder.Append("Vulkan Required Extensions: [ ");
         for (int i = 0; i < glfwExtensionCount; i++) {
             byte* currentExtension = glfwExtensions[i];
             int length = 0;
