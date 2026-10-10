@@ -48,6 +48,8 @@ internal static class BlockGame {
             createInfo.PpEnabledExtensionNames = glfwExtensions;
 
             // Debug print out available extensions.
+            StringBuilder builder = new();
+            builder.Append("Vulkan Extensions: [ ");
             for (int i = 0; i < glfwExtensionCount; i++) {
                 byte* currentExtension = glfwExtensions[i];
                 int length = 0;
@@ -56,9 +58,14 @@ internal static class BlockGame {
                         length = l;
                         break;
                     }
-                    Console.WriteLine(Marshal.PtrToStringUTF8((nint)currentExtension));
+                }
+                builder.Append(Marshal.PtrToStringUTF8((nint)currentExtension));
+                if (i < glfwExtensionCount - 1) {
+                    builder.Append(", ");
                 }
             }
+            builder.Append(" ]");
+            Console.WriteLine(builder.ToString());
         }
     }
 }
