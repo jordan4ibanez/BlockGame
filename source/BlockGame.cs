@@ -25,7 +25,7 @@ internal static class BlockGame {
 
         InitWindow();
         InitVulkan();
-        // Mainloop;
+        Mainloop();
         CleanUp();
     }
 
@@ -35,6 +35,20 @@ internal static class BlockGame {
             Title = WINDOW_NAME
         };
         window = Window.Create(options);
+    }
+
+    static unsafe void Mainloop() {
+        if (window == null) {
+            throw new Exception("Window became null");
+        }
+
+        if (window.Handle == 0) {
+            throw new Exception("Window handle pointer is null");
+        }
+
+        while (!glfw.WindowShouldClose((WindowHandle*)window.Handle)) {
+            glfw.PollEvents();
+        }
     }
 
     static unsafe void InitVulkan() {
