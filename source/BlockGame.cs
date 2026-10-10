@@ -5,27 +5,6 @@ using Raylib_cs;
 
 namespace BlockGame;
 
-
-
-static class Testing {
-
-    static readonly FastNoiseLite noise = new();
-
-    public static void Initialize() {
-        noise.SetNoiseType(FastNoiseLite.NoiseType.Value);
-    }
-
-    public static void DoThing() {
-        for (int x = 0; x <= 256; x++) {
-            for (int y = 0; y <= 256; y++) {
-                for (int z = 0; z <= 256; z++) {
-                    Console.WriteLine(noise.GetNoise(x, y, z));
-                }
-            }
-        }
-    }
-}
-
 class Game : IDisposable {
 
     readonly string windowTitle = "BlockGame";
