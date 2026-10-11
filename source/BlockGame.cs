@@ -185,7 +185,7 @@ internal static class BlockGame {
             //! End manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
 
             // VK extension support check.
-            DebugPrintExtensionSupport(vulkan);
+            // DebugPrintExtensionSupport(vulkan);
 
             // VK validation layer support check.
             if (ENABLE_VALIDATION_LAYERS && !CheckValidationLayerSupport()) {
