@@ -91,6 +91,9 @@ internal static class BlockGame {
     }
 
     static unsafe void PickPhysicalDevice() {
+        if (vulkan == null) {
+            throw new Exception("Vulkan DLL became null.");
+        }
         uint deviceCount = 0;
         vulkan.EnumeratePhysicalDevices(vulkanInstance, &deviceCount, null);
 
@@ -114,6 +117,9 @@ internal static class BlockGame {
     }
 
     static unsafe bool IsDeviceSuitable(PhysicalDevice device) {
+        if (vulkan == null) {
+            throw new Exception("Vulkan DLL became null.");
+        }
 
         return true;
     }
