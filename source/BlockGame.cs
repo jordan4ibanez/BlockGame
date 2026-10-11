@@ -27,7 +27,7 @@ internal static class BlockGame {
     private static Vk? vulkan;
 
     readonly static bool ENABLE_VALIDATION_LAYERS = true;
-    readonly static string[] requiredValidationLayers = ["VK_LAYER_KHRONOS_validation", "VK_LAYER_DOES_NOT_EXIST_FOR_TESTING"];
+    readonly static string[] requiredValidationLayers = ["VK_LAYER_KHRONOS_validation"];
 
     public static unsafe void Main() {
 
@@ -106,6 +106,16 @@ internal static class BlockGame {
             InstanceCreateInfo createInfo = new();
             createInfo.SType = StructureType.InstanceCreateInfo;
             createInfo.PApplicationInfo = &appInfo;
+
+            //~ VK debug messenger. (if enabled)
+
+            DebugUtilsMessengerCreateInfoEXT debugCreateInfo = new();
+            if (ENABLE_VALIDATION_LAYERS) {
+                PopulateDebugMessengerCreateInfo(ref debugCreateInfo);
+                createInfo.PNext = &debugCreateInfo;
+            }
+
+            //~ Back to VK create info.
 
             List<byte[]> validationLayerNameBytes = [.. requiredValidationLayers.Select(Encoding.UTF8.GetBytes)];
             GCHandle[] validationLayerNameHandles = new GCHandle[validationLayerNameBytes.Count];
@@ -238,7 +248,7 @@ internal static class BlockGame {
             throw new Exception("null data");
         }
 
-        Console.WriteLine(Marshal.PtrToStringUTF8((nint)pCallbackData->PMessage));
+        Console.WriteLine($"[VULKAN]: {Marshal.PtrToStringUTF8((nint)pCallbackData->PMessage)}");
 
         return Vk.False;
     }
