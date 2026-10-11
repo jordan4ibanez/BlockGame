@@ -121,7 +121,13 @@ internal static class BlockGame {
             throw new Exception("Vulkan DLL became null.");
         }
 
-        return true;
+        PhysicalDeviceProperties deviceProperties;
+        vulkan.GetPhysicalDeviceProperties(device, &deviceProperties);
+
+        PhysicalDeviceFeatures deviceFeatures;
+        vulkan.GetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+        return deviceProperties.DeviceType == PhysicalDeviceType.DiscreteGpu && deviceFeatures.GeometryShader;
     }
 
 
