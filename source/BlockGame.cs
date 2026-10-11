@@ -5,6 +5,8 @@ using Silk.NET.GLFW;
 using Silk.NET.Maths;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Reflection.Metadata;
 
 namespace BlockGame;
 
@@ -190,7 +192,7 @@ internal static class BlockGame {
 
             Console.WriteLine("Enabled vulkan debug messenger.");
         } else {
-            throw new Exception("Debug messenger setup failed.");
+            throw new Exception("Debug messenger setup failed. ExtDebugUtils.");
         }
     }
 
@@ -200,6 +202,20 @@ internal static class BlockGame {
         createInfo.MessageType = DebugUtilsMessageTypeFlagsEXT.GeneralBitExt | DebugUtilsMessageTypeFlagsEXT.ValidationBitExt | DebugUtilsMessageTypeFlagsEXT.PerformanceBitExt;
         createInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(DebugCallback);
         createInfo.PUserData = null; // Optional
+    }
+
+    static unsafe void DestroyDebugUtilsMessengerEXT(Instance instance, DebugUtilsMessengerEXT debugMessenger, AllocationCallbacks* pAllocator) {
+        if (debugMessenger.Handle == 0) {
+            return;
+        }
+        if (vulkan == null) {
+            throw new Exception("Vulkan became null.");
+        }
+        if (vulkan.TryGetInstanceExtension<ExtDebugUtils>(vulkanInstance, out var extDebugUtils)) {
+            extDebugUtils.DestroyDebugUtilsMessenger(vulkanInstance, debugMessenger, null);
+        } else {
+            throw new Exception("Debug messenger destruction failed. ExtDebugUtils.");
+        }
     }
 
     static unsafe uint DebugCallback(DebugUtilsMessageSeverityFlagsEXT messageSeverity,
@@ -268,6 +284,12 @@ internal static class BlockGame {
     }
 
     static unsafe void CleanUp() {
+        Console.WriteLine("== CLEAN UP ==");
+
+        if (ENABLE_VALIDATION_LAYERS) {
+            DestroyDebugUtilsMessengerEXT(vulkanInstance, debugMessenger, null);
+            Console.WriteLine("Destroyed debug messenger.");
+        }
 
         if (vulkan == null) {
             throw new Exception("Vulkan DLL became null somehow");
@@ -279,8 +301,11 @@ internal static class BlockGame {
         }
 
         vulkan.DestroyInstance(vulkanInstance, null);
+        Console.WriteLine("Destroyed Vulkan instance.");
         window.Dispose();
+        Console.WriteLine("Destroyed window.");
         glfw.Terminate();
+        Console.WriteLine("Destroyed GLFW.");
 
     }
 
