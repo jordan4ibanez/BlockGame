@@ -110,7 +110,6 @@ internal static class BlockGame {
 
                 PhysicalDeviceProperties properties = vulkan.GetPhysicalDeviceProperties(physicalDevice);
                 Console.WriteLine($"Selected physical device: [ {Marshal.PtrToStringUTF8((nint)properties.DeviceName)} ]");
-
                 break;
             }
         }
@@ -118,6 +117,12 @@ internal static class BlockGame {
         if (physicalDevice.Handle == 0) {
             throw new Exception("Failed to find a suitable GPU.");
         }
+    }
+
+    static unsafe uint FindQueueFamilies(PhysicalDevice device) {
+        
+        
+        return 0;
     }
 
     static unsafe bool IsDeviceSuitable(PhysicalDevice device) {
