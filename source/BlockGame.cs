@@ -107,6 +107,10 @@ internal static class BlockGame {
         foreach (PhysicalDevice device in devices) {
             if (IsDeviceSuitable(device)) {
                 physicalDevice = device;
+
+                PhysicalDeviceProperties properties = vulkan.GetPhysicalDeviceProperties(physicalDevice);
+                Console.WriteLine($"Selected physical device: [ {Marshal.PtrToStringUTF8((nint)properties.DeviceName)} ]");
+
                 break;
             }
         }
