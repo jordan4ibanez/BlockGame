@@ -179,15 +179,26 @@ internal static class BlockGame {
         if (!ENABLE_VALIDATION_LAYERS) {
             return;
         }
+        if (vulkan == null) {
+            throw new Exception("Vulkan became null.");
+        }
 
-        DebugUtilsMessengerCreateInfoEXT createInfo = new();
-        createInfo.SType = StructureType.DebugUtilsMessengerCreateInfoExt;
-        createInfo.MessageSeverity = DebugUtilsMessageSeverityFlagsEXT.VerboseBitExt | DebugUtilsMessageSeverityFlagsEXT.WarningBitExt | DebugUtilsMessageSeverityFlagsEXT.ErrorBitExt;
-        createInfo.MessageType = DebugUtilsMessageTypeFlagsEXT.GeneralBitExt | DebugUtilsMessageTypeFlagsEXT.ValidationBitExt | DebugUtilsMessageTypeFlagsEXT.PerformanceBitExt;
-        createInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(DebugCallback);
-        createInfo.PUserData = null; // Optional
+        if (vulkan.TryGetInstanceExtension<ExtDebugUtils>(vulkanInstance, out var extDebugUtils)) {
+            DebugUtilsMessengerCreateInfoEXT createInfo = new();
+            createInfo.SType = StructureType.DebugUtilsMessengerCreateInfoExt;
+            createInfo.MessageSeverity = DebugUtilsMessageSeverityFlagsEXT.VerboseBitExt | DebugUtilsMessageSeverityFlagsEXT.WarningBitExt | DebugUtilsMessageSeverityFlagsEXT.ErrorBitExt;
+            createInfo.MessageType = DebugUtilsMessageTypeFlagsEXT.GeneralBitExt | DebugUtilsMessageTypeFlagsEXT.ValidationBitExt | DebugUtilsMessageTypeFlagsEXT.PerformanceBitExt;
+            createInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(DebugCallback);
+            createInfo.PUserData = null; // Optional    
 
-        Console.WriteLine("Enabled vulkan debug messenger.");
+            extDebugUtils.CreateDebugUtilsMessenger(vulkanInstance, in createInfo, null, out debugMessenger);
+
+            Console.WriteLine("Enabled vulkan debug messenger.");
+        } else {
+            throw new Exception("Debug messenger setup failed.");
+        }
+
+
     }
 
     static unsafe uint DebugCallback(DebugUtilsMessageSeverityFlagsEXT messageSeverity,
