@@ -10,6 +10,12 @@ using System.Reflection.Metadata;
 
 namespace BlockGame;
 
+class QueueFamilyIndices {
+    public uint? graphicsFamily;
+
+    public QueueFamilyIndices() { }
+}
+
 internal static class BlockGame {
 
     private const string WINDOW_NAME = "BlockGame";
@@ -119,10 +125,33 @@ internal static class BlockGame {
         }
     }
 
-    static unsafe uint FindQueueFamilies(PhysicalDevice device) {
-        
-        
-        return 0;
+    static unsafe QueueFamilyIndices FindQueueFamilies(PhysicalDevice device) {
+
+        if (vulkan == null) {
+            throw new Exception("Vulkan DLL became null.");
+        }
+
+        QueueFamilyIndices indices = new();
+
+        uint queueFamilyCount = 0;
+        vulkan.GetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, null);
+
+        QueueFamilyProperties[] queueFamilies = new QueueFamilyProperties[queueFamilyCount];
+        vulkan.GetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies);
+
+        int i = 0;
+        foreach (var queueFamily in queueFamilies) {
+            // Alternative: queueFamily.QueueFlags.HasFlag(QueueFlags.GraphicsBit)
+            if ((queueFamily.QueueFlags & QueueFlags.GraphicsBit) != 0) {
+                indices.graphicsFamily = (uint)i;
+            }
+
+            i++;
+        }
+
+
+
+        return indices;
     }
 
     static unsafe bool IsDeviceSuitable(PhysicalDevice device) {
