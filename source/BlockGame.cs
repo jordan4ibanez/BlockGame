@@ -89,6 +89,18 @@ internal static class BlockGame {
     }
 
     static unsafe void PickPhysicalDevice() {
+        PhysicalDevice physicalDevice = new();
+
+        uint deviceCount = 0;
+        vulkan.EnumeratePhysicalDevices(vulkanInstance, &deviceCount, null);
+
+        if (deviceCount == 0) {
+            throw new Exception("There are no devices that support Vulkan on this system.");
+        }
+
+        PhysicalDevice[] devices = new PhysicalDevice[deviceCount];
+        vulkan.EnumeratePhysicalDevices(vulkanInstance, &deviceCount, devices);
+
 
     }
 
