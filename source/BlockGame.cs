@@ -29,6 +29,8 @@ internal static class BlockGame {
     readonly static bool ENABLE_VALIDATION_LAYERS = true;
     readonly static string[] requiredValidationLayers = ["VK_LAYER_KHRONOS_validation"];
 
+    private static PhysicalDevice physicalDevice = new();
+
     public static unsafe void Main() {
 
         InitWindow();
@@ -89,8 +91,6 @@ internal static class BlockGame {
     }
 
     static unsafe void PickPhysicalDevice() {
-        PhysicalDevice physicalDevice = new();
-
         uint deviceCount = 0;
         vulkan.EnumeratePhysicalDevices(vulkanInstance, &deviceCount, null);
 
@@ -100,6 +100,17 @@ internal static class BlockGame {
 
         PhysicalDevice[] devices = new PhysicalDevice[deviceCount];
         vulkan.EnumeratePhysicalDevices(vulkanInstance, &deviceCount, devices);
+
+        foreach (PhysicalDevice device in devices) {
+            if (IsDeviceSuitable(device)) {
+                physicalDevice = device;
+                break;
+            }
+        }
+
+        if (physicalDevice.Handle == 0) {
+            throw new Exception("Failed to find a suitable GPU.");
+        }
     }
 
     static unsafe bool IsDeviceSuitable(PhysicalDevice device) {
