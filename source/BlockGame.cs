@@ -19,6 +19,8 @@ internal static class BlockGame {
     // This is the instance of Vulkan.
     private static Instance vulkanInstance;
 
+    private static DebugUtilsMessengerEXT debugMessenger;
+
     // This is the Vulkan library DLL. (function pointers)
     private static Vk? vulkan;
 
