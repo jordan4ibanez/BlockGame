@@ -100,8 +100,11 @@ internal static class BlockGame {
 
         PhysicalDevice[] devices = new PhysicalDevice[deviceCount];
         vulkan.EnumeratePhysicalDevices(vulkanInstance, &deviceCount, devices);
+    }
 
+    static unsafe bool IsDeviceSuitable(PhysicalDevice device) {
 
+        return true;
     }
 
 
