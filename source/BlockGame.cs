@@ -27,7 +27,7 @@ internal static class BlockGame {
     private static Vk? vulkan;
 
     readonly static bool ENABLE_VALIDATION_LAYERS = true;
-    readonly static string[] requiredValidationLayers = ["VK_LAYER_KHRONOS_validation"];
+    readonly static string[] requiredValidationLayers = ["VK_LAYER_KHRONOS_validation", "VK_LAYER_DOES_NOT_EXIST_FOR_TESTING"];
 
     public static unsafe void Main() {
 
@@ -151,6 +151,13 @@ internal static class BlockGame {
 
             vulkan = Vk.GetApi(createInfo, out vulkanInstance);
 
+            if (vulkanInstance.Handle == 0) {
+                throw new Exception("Vulkan instance failed to create.");
+            }
+            if (vulkan == null) {
+                throw new Exception("Failed to initialize Vulkan.");
+            }
+
 
 
             //! Manual memory management. (Free) [requiredExtensionNamesHandles, requiredExtensionNamePointers]
@@ -172,7 +179,7 @@ internal static class BlockGame {
 
             // VK validation layer support check.
             if (ENABLE_VALIDATION_LAYERS && !CheckValidationLayerSupport()) {
-                throw new Exception("Missing validation layer!");
+                // throw new Exception("Missing validation layer!");
             }
         }
     }
@@ -184,6 +191,9 @@ internal static class BlockGame {
         if (vulkan == null) {
             throw new Exception("Vulkan became null.");
         }
+        if (vulkanInstance.Handle == 0) {
+            throw new Exception("Vulkan instance became null.");
+        }
 
         if (vulkan.TryGetInstanceExtension<ExtDebugUtils>(vulkanInstance, out var extDebugUtils)) {
             DebugUtilsMessengerCreateInfoEXT createInfo = new();
@@ -194,6 +204,7 @@ internal static class BlockGame {
         } else {
             throw new Exception("Debug messenger setup failed. ExtDebugUtils.");
         }
+
     }
 
     static unsafe void PopulateDebugMessengerCreateInfo(ref DebugUtilsMessengerCreateInfoEXT createInfo) {
