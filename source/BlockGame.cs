@@ -85,6 +85,11 @@ internal static class BlockGame {
     static unsafe void InitVulkan() {
         CreateInstance();
         SetupDebugMessenger();
+        PickPhysicalDevice();
+    }
+
+    static unsafe void PickPhysicalDevice() {
+
     }
 
 
