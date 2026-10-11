@@ -199,7 +199,7 @@ internal static class BlockGame {
         createInfo.MessageSeverity = DebugUtilsMessageSeverityFlagsEXT.VerboseBitExt | DebugUtilsMessageSeverityFlagsEXT.WarningBitExt | DebugUtilsMessageSeverityFlagsEXT.ErrorBitExt;
         createInfo.MessageType = DebugUtilsMessageTypeFlagsEXT.GeneralBitExt | DebugUtilsMessageTypeFlagsEXT.ValidationBitExt | DebugUtilsMessageTypeFlagsEXT.PerformanceBitExt;
         createInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(DebugCallback);
-        createInfo.PUserData = null; // Optional    
+        createInfo.PUserData = null; // Optional
     }
 
     static unsafe uint DebugCallback(DebugUtilsMessageSeverityFlagsEXT messageSeverity,
