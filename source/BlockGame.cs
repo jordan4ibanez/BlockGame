@@ -185,20 +185,21 @@ internal static class BlockGame {
 
         if (vulkan.TryGetInstanceExtension<ExtDebugUtils>(vulkanInstance, out var extDebugUtils)) {
             DebugUtilsMessengerCreateInfoEXT createInfo = new();
-            createInfo.SType = StructureType.DebugUtilsMessengerCreateInfoExt;
-            createInfo.MessageSeverity = DebugUtilsMessageSeverityFlagsEXT.VerboseBitExt | DebugUtilsMessageSeverityFlagsEXT.WarningBitExt | DebugUtilsMessageSeverityFlagsEXT.ErrorBitExt;
-            createInfo.MessageType = DebugUtilsMessageTypeFlagsEXT.GeneralBitExt | DebugUtilsMessageTypeFlagsEXT.ValidationBitExt | DebugUtilsMessageTypeFlagsEXT.PerformanceBitExt;
-            createInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(DebugCallback);
-            createInfo.PUserData = null; // Optional    
-
+            PopulateDebugMessengerCreateInfo(ref createInfo);
             extDebugUtils.CreateDebugUtilsMessenger(vulkanInstance, in createInfo, null, out debugMessenger);
 
             Console.WriteLine("Enabled vulkan debug messenger.");
         } else {
             throw new Exception("Debug messenger setup failed.");
         }
+    }
 
-
+    static unsafe void PopulateDebugMessengerCreateInfo(ref DebugUtilsMessengerCreateInfoEXT createInfo) {
+        createInfo.SType = StructureType.DebugUtilsMessengerCreateInfoExt;
+        createInfo.MessageSeverity = DebugUtilsMessageSeverityFlagsEXT.VerboseBitExt | DebugUtilsMessageSeverityFlagsEXT.WarningBitExt | DebugUtilsMessageSeverityFlagsEXT.ErrorBitExt;
+        createInfo.MessageType = DebugUtilsMessageTypeFlagsEXT.GeneralBitExt | DebugUtilsMessageTypeFlagsEXT.ValidationBitExt | DebugUtilsMessageTypeFlagsEXT.PerformanceBitExt;
+        createInfo.PfnUserCallback = new PfnDebugUtilsMessengerCallbackEXT(DebugCallback);
+        createInfo.PUserData = null; // Optional    
     }
 
     static unsafe uint DebugCallback(DebugUtilsMessageSeverityFlagsEXT messageSeverity,
