@@ -41,6 +41,8 @@ internal static class BlockGame {
 
     private static PhysicalDevice physicalDevice = new();
 
+    private static Device device;
+
     public static unsafe void Main() {
 
         InitWindow();
