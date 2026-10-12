@@ -145,9 +145,14 @@ internal static class BlockGame {
 
         int i = 0;
         foreach (var queueFamily in queueFamilies) {
+
             // Alternative: queueFamily.QueueFlags.HasFlag(QueueFlags.GraphicsBit)
             if ((queueFamily.QueueFlags & QueueFlags.GraphicsBit) != 0) {
                 indices.graphicsFamily = (uint)i;
+            }
+
+            if (indices.IsComplete()) {
+                break;
             }
 
             i++;
