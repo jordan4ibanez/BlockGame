@@ -138,10 +138,10 @@ internal static class BlockGame {
         QueueFamilyIndices indices = new();
 
         uint queueFamilyCount = 0;
-        vulkan.GetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, null);
+        vulkan.GetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, null);
 
         QueueFamilyProperties[] queueFamilies = new QueueFamilyProperties[queueFamilyCount];
-        vulkan.GetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies);
+        vulkan.GetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies);
 
         int i = 0;
         foreach (var queueFamily in queueFamilies) {
