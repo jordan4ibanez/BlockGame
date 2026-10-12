@@ -149,8 +149,6 @@ internal static class BlockGame {
             i++;
         }
 
-
-
         return indices;
     }
 
