@@ -14,6 +14,10 @@ class QueueFamilyIndices {
     public uint? graphicsFamily;
 
     public QueueFamilyIndices() { }
+
+    public bool IsComplete() {
+        return graphicsFamily != null;
+    }
 }
 
 internal static class BlockGame {
@@ -163,7 +167,11 @@ internal static class BlockGame {
         PhysicalDeviceFeatures deviceFeatures;
         vulkan.GetPhysicalDeviceFeatures(device, &deviceFeatures);
 
-        return deviceProperties.DeviceType == PhysicalDeviceType.DiscreteGpu && deviceFeatures.GeometryShader;
+        // return deviceProperties.DeviceType == PhysicalDeviceType.DiscreteGpu && deviceFeatures.GeometryShader;
+
+        QueueFamilyIndices indices = FindQueueFamilies(device);
+
+        return indices.IsComplete();
     }
 
 
