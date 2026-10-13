@@ -10,16 +10,18 @@ using System.Reflection.Metadata;
 using Microsoft.VisualBasic;
 using Silk.NET.Core.Native;
 using Silk.NET.Vulkan.Extensions.KHR;
+using Silk.NET.Core;
 
 namespace BlockGame;
 
 class QueueFamilyIndices {
     public uint? graphicsFamily;
+    public uint? presentFamily;
 
     public QueueFamilyIndices() { }
 
     public bool IsComplete() {
-        return graphicsFamily != null;
+        return graphicsFamily != null && presentFamily != null;
     }
 }
 
@@ -238,6 +240,13 @@ internal static class BlockGame {
             // Alternative: queueFamily.QueueFlags.HasFlag(QueueFlags.GraphicsBit)
             if ((queueFamily.QueueFlags & QueueFlags.GraphicsBit) != 0) {
                 indices.graphicsFamily = (uint)i;
+            }
+
+            if (vulkan.TryGetInstanceExtension<KhrSurface>(vulkanInstance, out var khrSurface)) {
+                khrSurface.GetPhysicalDeviceSurfaceSupport(physicalDevice, (uint)i, surface, out Bool32 presentSupport);
+                if (presentSupport) {
+                    indices.presentFamily = (uint)i;
+                }
             }
 
             if (indices.IsComplete()) {
