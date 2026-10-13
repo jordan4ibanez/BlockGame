@@ -53,6 +53,8 @@ internal static class BlockGame {
 
     private static SurfaceKHR surface = new();
 
+    private static Queue presentQueue = new();
+
     public static unsafe void Main() {
 
         InitWindow();
@@ -134,54 +136,75 @@ internal static class BlockGame {
         //~ Queue create info.
         QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
 
-        DeviceQueueCreateInfo queueCreateInfo;
-        queueCreateInfo.SType = StructureType.DeviceQueueCreateInfo;
         if (indices.graphicsFamily == null) {
             throw new Exception("Missing graphics family.");
         }
-        queueCreateInfo.QueueFamilyIndex = indices.graphicsFamily.Value;
-        queueCreateInfo.QueueCount = 1;
+        if (indices.presentFamily == null) {
+            throw new Exception("Missing present family.");
+        }
+
+        List<DeviceQueueCreateInfo> queueCreateInfos = [];
+        HashSet<uint> uniqueQueueFamilies = [indices.graphicsFamily.Value, indices.presentFamily.Value];
 
         float queuePriority = 1.0f;
-        queueCreateInfo.PQueuePriorities = &queuePriority;
+
+        foreach (uint queueFamily in uniqueQueueFamilies) {
+            DeviceQueueCreateInfo queueCreateInfo = new();
+            queueCreateInfo.SType = StructureType.DeviceQueueCreateInfo;
+            queueCreateInfo.QueueFamilyIndex = queueFamily;
+            queueCreateInfo.QueueCount = 1;
+            queueCreateInfo.PQueuePriorities = &queuePriority;
+            queueCreateInfos.Add(queueCreateInfo);
+        }
+
+        // queueCreateInfo.PQueuePriorities = &queuePriority;
 
         //~ Physical device features.
         PhysicalDeviceFeatures deviceFeatures = new();
 
-
         DeviceCreateInfo createInfo = new();
         createInfo.SType = StructureType.DeviceCreateInfo;
-        createInfo.PQueueCreateInfos = &queueCreateInfo;
-        createInfo.QueueCreateInfoCount = 1;
-        createInfo.PEnabledFeatures = &deviceFeatures;
 
-        createInfo.EnabledExtensionCount = 0;
+
+        DeviceQueueCreateInfo[] queueCreateInfosArray = [.. queueCreateInfos];
 
         List<byte[]> validationLayerNameBytes = [.. requiredValidationLayers.Select(Encoding.UTF8.GetBytes)];
         GCHandle[] validationLayerNameHandles = new GCHandle[validationLayerNameBytes.Count];
         byte** validationLayerNamePointers = null;
 
-        if (ENABLE_VALIDATION_LAYERS) {
-            createInfo.EnabledLayerCount = (uint)requiredValidationLayers.Length;
+        fixed (DeviceQueueCreateInfo* queueCreateInfosPointer = &queueCreateInfosArray[0]) {
 
-            //! Manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
-            validationLayerNamePointers = (byte**)NativeMemory.Alloc((nuint)validationLayerNameBytes.Count, (nuint)sizeof(byte*));
-            for (int i = 0; i < validationLayerNameBytes.Count; i++) {
-                validationLayerNameHandles[i] = GCHandle.Alloc(validationLayerNameBytes[i], GCHandleType.Pinned);
-                validationLayerNamePointers[i] = (byte*)validationLayerNameHandles[i].AddrOfPinnedObject();
+            createInfo.PQueueCreateInfos = queueCreateInfosPointer;
+            createInfo.QueueCreateInfoCount = (uint)queueCreateInfos.Count;
+            createInfo.PEnabledFeatures = &deviceFeatures;
+
+            createInfo.EnabledExtensionCount = 0;
+
+
+
+            if (ENABLE_VALIDATION_LAYERS) {
+                createInfo.EnabledLayerCount = (uint)requiredValidationLayers.Length;
+
+                //! Manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
+                validationLayerNamePointers = (byte**)NativeMemory.Alloc((nuint)validationLayerNameBytes.Count, (nuint)sizeof(byte*));
+                for (int i = 0; i < validationLayerNameBytes.Count; i++) {
+                    validationLayerNameHandles[i] = GCHandle.Alloc(validationLayerNameBytes[i], GCHandleType.Pinned);
+                    validationLayerNamePointers[i] = (byte*)validationLayerNameHandles[i].AddrOfPinnedObject();
+                }
+                //! End manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
+                createInfo.PpEnabledLayerNames = validationLayerNamePointers;
+            } else {
+                createInfo.EnabledLayerCount = 0;
             }
-            //! End manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
-            createInfo.PpEnabledLayerNames = validationLayerNamePointers;
-        } else {
-            createInfo.EnabledLayerCount = 0;
-        }
 
-        // Logical device is created.
-        if (vulkan.CreateDevice(physicalDevice, &createInfo, null, out device) != Result.Success) {
-            throw new Exception("Failed to create logical device.");
-        }
+            // Logical device is created.
+            if (vulkan.CreateDevice(physicalDevice, &createInfo, null, out device) != Result.Success) {
+                throw new Exception("Failed to create logical device.");
+            }
 
-        vulkan.GetDeviceQueue(device, indices.graphicsFamily.Value, 0, out graphicsQueue);
+            vulkan.GetDeviceQueue(device, indices.graphicsFamily.Value, 0, out graphicsQueue);
+
+        }
 
         //! Manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
         for (int i = 0; i < validationLayerNameHandles.Length; i++) {
