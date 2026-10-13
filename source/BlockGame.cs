@@ -105,6 +105,60 @@ internal static class BlockGame {
 
     static unsafe void CreateLogicalDevice() {
 
+        //~ Queue create info.
+        QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
+
+        DeviceQueueCreateInfo queueCreateInfo;
+        queueCreateInfo.SType = StructureType.DeviceQueueCreateInfo;
+        if (indices.graphicsFamily == null) {
+            throw new Exception("Missing graphics family.");
+        }
+        queueCreateInfo.QueueFamilyIndex = indices.graphicsFamily.Value;
+        queueCreateInfo.QueueCount = 1;
+
+        float queuePriority = 1.0f;
+        queueCreateInfo.PQueuePriorities = &queuePriority;
+
+        //~ Physical device features.
+        PhysicalDeviceFeatures deviceFeatures = new();
+
+
+        DeviceCreateInfo createInfo = new();
+        createInfo.SType = StructureType.DeviceCreateInfo;
+        createInfo.PQueueCreateInfos = &queueCreateInfo;
+        createInfo.QueueCreateInfoCount = 1;
+        createInfo.PEnabledFeatures = &deviceFeatures;
+
+        createInfo.EnabledExtensionCount = 0;
+
+        List<byte[]> validationLayerNameBytes = [.. requiredValidationLayers.Select(Encoding.UTF8.GetBytes)];
+        GCHandle[] validationLayerNameHandles = new GCHandle[validationLayerNameBytes.Count];
+        byte** validationLayerNamePointers = null;
+
+        if (ENABLE_VALIDATION_LAYERS) {
+            createInfo.EnabledLayerCount = (uint)requiredValidationLayers.Length;
+
+            //! Manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
+            validationLayerNamePointers = (byte**)NativeMemory.Alloc((nuint)validationLayerNameBytes.Count, (nuint)sizeof(byte*));
+            for (int i = 0; i < validationLayerNameBytes.Count; i++) {
+                validationLayerNameHandles[i] = GCHandle.Alloc(validationLayerNameBytes[i], GCHandleType.Pinned);
+                validationLayerNamePointers[i] = (byte*)validationLayerNameHandles[i].AddrOfPinnedObject();
+            }
+            //! End manual memory management. (Malloc) [validationLayerNameHandles, validationLayerNamePointers]
+            createInfo.PpEnabledLayerNames = validationLayerNamePointers;
+        } else {
+            createInfo.EnabledLayerCount = 0;
+        }
+
+
+
+
+        //! Manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
+        for (int i = 0; i < validationLayerNameHandles.Length; i++) {
+            if (validationLayerNameHandles[i].IsAllocated) validationLayerNameHandles[i].Free();
+        }
+        if (validationLayerNamePointers != null) NativeMemory.Free(validationLayerNamePointers);
+        //! End manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
     }
 
     static unsafe void PickPhysicalDevice() {
