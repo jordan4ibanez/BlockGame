@@ -165,7 +165,7 @@ internal static class BlockGame {
         DeviceCreateInfo createInfo = new();
         createInfo.SType = StructureType.DeviceCreateInfo;
 
-
+        // This is converted into an array so it can be used as a pointer.
         DeviceQueueCreateInfo[] queueCreateInfosArray = [.. queueCreateInfos];
 
         List<byte[]> validationLayerNameBytes = [.. requiredValidationLayers.Select(Encoding.UTF8.GetBytes)];
@@ -179,8 +179,6 @@ internal static class BlockGame {
             createInfo.PEnabledFeatures = &deviceFeatures;
 
             createInfo.EnabledExtensionCount = 0;
-
-
 
             if (ENABLE_VALIDATION_LAYERS) {
                 createInfo.EnabledLayerCount = (uint)requiredValidationLayers.Length;
