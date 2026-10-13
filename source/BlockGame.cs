@@ -7,6 +7,9 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Reflection.Metadata;
+using Microsoft.VisualBasic;
+using Silk.NET.Core.Native;
+using Silk.NET.Vulkan.Extensions.KHR;
 
 namespace BlockGame;
 
@@ -46,7 +49,7 @@ internal static class BlockGame {
 
     private static Queue graphicsQueue;
 
-    private static SurfaceKHR surface;
+    private static SurfaceKHR surface = new();
 
     public static unsafe void Main() {
 
@@ -104,8 +107,20 @@ internal static class BlockGame {
     static unsafe void InitVulkan() {
         CreateInstance();
         SetupDebugMessenger();
+        CreateSurface();
         PickPhysicalDevice();
         CreateLogicalDevice();
+    }
+
+    static unsafe void CreateSurface() {
+        if (window == null) {
+            throw new Exception("Window became null.");
+        }
+        fixed (SurfaceKHR* surfacePointer = &surface) {
+            if (glfw.CreateWindowSurface(vulkanInstance.ToHandle(), (WindowHandle*)window.Handle, null, (VkNonDispatchableHandle*)surfacePointer) != (int)Result.Success) {
+                throw new Exception("Failed to create window surface.");
+            }
+        }
     }
 
     static unsafe void CreateLogicalDevice() {
@@ -478,6 +493,10 @@ internal static class BlockGame {
         }
         if (window == null) {
             throw new Exception("Window became null somehow");
+        }
+
+        if (vulkan.TryGetInstanceExtension<KhrSurface>(vulkanInstance, out var khrSurface)) {
+            khrSurface.DestroySurface(vulkanInstance, surface, null);
         }
 
         vulkan.DestroyDevice(device, null);
