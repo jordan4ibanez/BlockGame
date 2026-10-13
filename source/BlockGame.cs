@@ -200,6 +200,7 @@ internal static class BlockGame {
                 throw new Exception("Failed to create logical device.");
             }
 
+            vulkan.GetDeviceQueue(device, indices.presentFamily.Value, 0, out presentQueue);
             vulkan.GetDeviceQueue(device, indices.graphicsFamily.Value, 0, out graphicsQueue);
 
         }
