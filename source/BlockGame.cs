@@ -44,6 +44,8 @@ internal static class BlockGame {
     // Logical VK device.
     private static Device device;
 
+    private static Queue graphicsQueue;
+
     public static unsafe void Main() {
 
         InitWindow();
@@ -159,6 +161,8 @@ internal static class BlockGame {
         if (vulkan.CreateDevice(physicalDevice, &createInfo, null, out device) != Result.Success) {
             throw new Exception("Failed to create logical device.");
         }
+
+        vulkan.GetDeviceQueue(device, indices.graphicsFamily.Value, 0, out graphicsQueue);
 
         //! Manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
         for (int i = 0; i < validationLayerNameHandles.Length; i++) {
