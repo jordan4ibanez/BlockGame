@@ -100,6 +100,11 @@ internal static class BlockGame {
         CreateInstance();
         SetupDebugMessenger();
         PickPhysicalDevice();
+        CreateLogicalDevice();
+    }
+
+    static unsafe void CreateLogicalDevice() {
+
     }
 
     static unsafe void PickPhysicalDevice() {
