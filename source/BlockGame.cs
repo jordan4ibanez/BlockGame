@@ -265,7 +265,7 @@ internal static class BlockGame {
             }
 
             if (vulkan.TryGetInstanceExtension<KhrSurface>(vulkanInstance, out var khrSurface)) {
-                khrSurface.GetPhysicalDeviceSurfaceSupport(physicalDevice, (uint)i, surface, out Bool32 presentSupport);
+                khrSurface.GetPhysicalDeviceSurfaceSupport(device, (uint)i, surface, out Bool32 presentSupport);
                 if (presentSupport) {
                     indices.presentFamily = (uint)i;
                 }
