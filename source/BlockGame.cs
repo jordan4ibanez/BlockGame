@@ -41,6 +41,7 @@ internal static class BlockGame {
 
     private static PhysicalDevice physicalDevice = new();
 
+    // Logical VK device.
     private static Device device;
 
     public static unsafe void Main() {
@@ -105,6 +106,10 @@ internal static class BlockGame {
 
     static unsafe void CreateLogicalDevice() {
 
+        if (vulkan == null) {
+            throw new Exception("Vulkan DLL became null.");
+        }
+
         //~ Queue create info.
         QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
 
@@ -150,8 +155,10 @@ internal static class BlockGame {
             createInfo.EnabledLayerCount = 0;
         }
 
-
-
+        // Logical device is created.
+        if (vulkan.CreateDevice(physicalDevice, &createInfo, null, out device) != Result.Success) {
+            throw new Exception("Failed to create logical device.");
+        }
 
         //! Manual memory management. (Free) [validationLayerNameHandles, validationLayerNamePointers]
         for (int i = 0; i < validationLayerNameHandles.Length; i++) {
@@ -460,18 +467,18 @@ internal static class BlockGame {
     static unsafe void CleanUp() {
         Console.WriteLine("== CLEAN UP ==");
 
-        if (ENABLE_VALIDATION_LAYERS) {
-            DestroyDebugUtilsMessengerEXT(vulkanInstance, debugMessenger, null);
-            Console.WriteLine("Destroyed debug messenger.");
-        }
-
         if (vulkan == null) {
             throw new Exception("Vulkan DLL became null somehow");
         }
-
-
         if (window == null) {
             throw new Exception("Window became null somehow");
+        }
+
+        vulkan.DestroyDevice(device, null);
+
+        if (ENABLE_VALIDATION_LAYERS) {
+            DestroyDebugUtilsMessengerEXT(vulkanInstance, debugMessenger, null);
+            Console.WriteLine("Destroyed debug messenger.");
         }
 
         vulkan.DestroyInstance(vulkanInstance, null);
