@@ -46,6 +46,8 @@ internal static class BlockGame {
 
     private static Queue graphicsQueue;
 
+    private static SurfaceKHR surface;
+
     public static unsafe void Main() {
 
         InitWindow();
